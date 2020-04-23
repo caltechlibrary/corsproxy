@@ -27,7 +27,7 @@ if [[ -e config.sh ]]; then
     source config.sh
 else
     # Default values in case config.sh is missing.
-    PID_FILE=/var/run/corsproxy/corsproxy.pid
+    PID_FILE=/tmp/corsproxy.pid
     RESTART_PAUSE=10
 fi
 
@@ -43,8 +43,10 @@ case "$1" in
         # Solution: writes the PID to file descriptor 3, so that it can be
         # read from there on the following line.  Genius idea posted by user
         # John Kugelman, 2014-07-16, https://stackoverflow.com/a/3786955/743730
-        ( node ../server/server.js 2>&1 & echo $! >&3) 3>pid | $LOG & >&2
-        PID=$(<pid)
+        TMPFILE=$(mktemp /tmp/corsproxy.XXXXXX)
+        trap 'rm -f -- "$TMPFILE"' INT TERM HUP EXIT
+        ( node ../server/server.js 2>&1 & echo $! >&3) 3>$TMPFILE | $LOG & >&2
+        PID=$(<$TMPFILE)
         if [[ -z $PID ]]; then
             log "Failed to start server process" >&2
             exit 1
