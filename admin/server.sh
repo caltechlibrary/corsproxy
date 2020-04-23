@@ -98,7 +98,7 @@ case "$1" in
         fi
         PID=`cat $PID_FILE`
         if ps -p $PID > /dev/null 2>&1 ; then
-            log "Hugo process $PID running." >&2
+            log "Process $PID running." >&2
             exit 0
         else
             log "Process $PID no longer exists." >&2
