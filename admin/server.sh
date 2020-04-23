@@ -37,7 +37,7 @@ fi
 
 case "$1" in
     start)
-        log "Starting server process ..."
+        log "Starting server process from directory `pwd`"
         # Problem: we need the PID from the first process in the pipe, but if
         # you use $! you'll get the PID of the last process in the pipe.
         # Solution: writes the PID to file descriptor 3, so that it can be
@@ -46,6 +46,7 @@ case "$1" in
         TMPFILE=$(mktemp /tmp/corsproxy.XXXXXX)
         trap 'rm -f -- "$TMPFILE"' INT TERM HUP EXIT
         ( node ../server/server.js 2>&1 & echo $! >&3) 3>$TMPFILE | $LOG & >&2
+        sleep 2
         PID=$(<$TMPFILE)
         if [[ -z $PID ]]; then
             log "Failed to start server process" >&2
