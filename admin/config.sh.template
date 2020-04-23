@@ -1,0 +1,24 @@
+## ============================================================================
+## File name   : config.sh
+## Description : General and environment variables for corsproxy server
+## Author(s)   : Michael Hucka <mhucka@caltech.edu>
+## Organization: California Institute of Technology
+## Date created: 2020-04-23
+##
+## If you are looking at config.sh.template, copy the file to config.sh and
+## then edit the values as needed.
+## ============================================================================
+
+# The host where the proxy will be listening.
+HOST="0.0.0.0"
+
+# The port on which the proxy will be listening.
+PORT=""
+
+# Only allow connections from whitelisted origins. This needs to be a list
+# of strings separated by spaces.
+WHITELIST=()
+
+# Define a list of headers that must be present in the request headers. This
+# is a means of stopping use by anything other than desired applications.
+REQUIRED_HEADER=()
