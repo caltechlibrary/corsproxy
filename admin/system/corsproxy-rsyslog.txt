@@ -1,0 +1,13 @@
+## ============================================================================
+## File name   : corsproxy-rsyslog.txt
+## Description : Configuration file for use with rsyslog
+## Author(s)   : Michael Hucka <mhucka@caltech.edu>
+## Organization: California Institute of Technology
+## Date created: 2020-04-23
+##
+## On a CentOS 7 system, with rsyslogd configuration files normally in
+## /etc/rsyslog.d, copy this file to /etc/rsyslog.d/corsproxy
+## ============================================================================
+
+if $programname == 'corsproxy' then /var/log/corsproxy/corsproxy.log
+& stop
