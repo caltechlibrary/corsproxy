@@ -61,13 +61,23 @@ function parseEnvList(env) {
   return env.split(',');
 }
 
-cors_anywhere.createServer({
-    requireHeader      : requiredHeaders,     // Note different spellings.
-    setHeaders         : {"X-Proxied-by": "CORS Proxy"},
-    checkRateLimit     : checkRateLimit(rateLimit),
-    redirectSameOrigin : true,
-    helpFile           : helpTextFile
-}).listen(port, host, function() {
-    console.log('Running CORS Proxy on ' + host + ':' + port);
-    console.log('Ratelimit: "' + rateLimit + '"');
+process.on('SIGTERM', () => {
+    console.log('Received SIGTERM; exiting.');
+    process.exit(0);
 });
+
+try {
+    cors_anywhere.createServer({
+        requireHeader      : requiredHeaders,     // Note different spellings.
+        setHeaders         : {"X-Proxied-by": "CORS Proxy"},
+        checkRateLimit     : checkRateLimit(rateLimit),
+        redirectSameOrigin : true,
+        helpFile           : helpTextFile
+    }).listen(port, host, function() {
+        console.log('Running CORS Proxy on ' + host + ':' + port);
+        console.log('Ratelimit: "' + rateLimit + '"');
+    });
+} catch (err) {
+    console.log(err);
+    process.exit(1);
+}
