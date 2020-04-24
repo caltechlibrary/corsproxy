@@ -9,5 +9,7 @@
 ## /etc/rsyslog.d, copy this file to /etc/rsyslog.d/corsproxy.conf
 ## ============================================================================
 
-if $programname == 'corsproxy' then /var/log/corsproxy/corsproxy.log
-& stop
+if ($programname == "corsproxy") then
+{
+    action(type="omfile" file="/var/log/corsproxy/corsproxy.log")
+}
