@@ -14,14 +14,12 @@ After=network-online.target
 [Service]
 Type=forking
 User=corsproxy
-Restart=on-failure
-RestartSec=5
 EnvironmentFile=/home/corsproxy/admin/config.sh
 PIDFile=/var/run/corsproxy/corsproxy.pid
-ExecStart=/home/corsproxy/admin/corsproxy-helper start
-ExecStop=/home/corsproxy/admin/corsproxy-helper stop
-ExecReload=/home/corsproxy/admin/corsproxy-helper restart
 PrivateTmp=yes
+ExecStart=/home/corsproxy/admin/corsproxy-helper start
+Restart=on-failure
+RestartSec=10
 StartLimitBurst=5
 StartLimitInterval=30
 
