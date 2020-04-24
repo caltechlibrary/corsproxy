@@ -18,8 +18,7 @@ log() {
     $LOG $1 >&2
 }
 
-DIR="$(dirname "${BASH_SOURCE[0]}")"
-DIR="$(realpath "${DIR}")"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 
 # Read configuration file and set defaults.
@@ -30,7 +29,7 @@ if [[ -e $DIR/config.sh ]]; then
     source config.sh
 else
     # Default values in case config.sh is missing.
-    PID_FILE=/tmp/corsproxy.pid
+    PID_FILE=${PIDfile:-/tmp/corsproxy.pid}
     RESTART_PAUSE=10
 fi
 
@@ -52,66 +51,76 @@ case "$1" in
         sleep 2
         PID=$(<$TMPFILE)
         if [[ -z $PID ]]; then
-            log "Failed to start server process" >&2
+            log "Failed to start server process"
             exit 1
         else
             echo $PID > $PID_FILE
-            log "Server started successfully with PID $PID." >&2
+            log "Server started successfully with PID $PID."
         fi
         exit 0
         ;;
 
     stop)
         if [[ ! -e $PID_FILE ]]; then
-            log "PID file $PID_FILE does not exist." >&2
+            log "PID file $PID_FILE does not exist."
             exit 2
         fi
         PID=$(<$PID_FILE)
-        log "Sending kill signal to process $PID" >&2
-        if ! kill -TERM  $PID> /dev/null 2>&1 ; then
-            # We don't want to start killing processes by name, because the
-            # user might have more than one server running.  Just give up.
-            if ps -p $PID > /dev/null 2>&1 ; then
-                log "Could not terminate process $PID." >&2
-                exit 1
-            else
-                log "Process $PID no longer exists." >&2
-                exit 1
-            fi
-        else
-            log "Process $PID killed." >&2
+        if [[ -z $PID ]]; then
+            log "Proxy server does not appear to be running"
             exit 0
+        else
+            log "Sending kill signal to process $PID"
+            if ! kill -TERM  $PID> /dev/null 2>&1 ; then
+                # We don't want to start killing processes by name, because
+                # there might be more than one server running.  Just give up.
+                if ps -p $PID > /dev/null 2>&1 ; then
+                    log "Could not terminate process $PID."
+                    exit 1
+                else
+                    log "Process $PID no longer exists."
+                    echo "" > $PID_FILE
+                    exit 1
+                fi
+            else
+                log "Process $PID killed."
+                exit 0
+            fi
         fi
         ;;
 
     restart)
         $0 stop
         if [[ $? -eq 0 ]]; then
-            log "Pausing for $RESTART_PAUSE s." >&2
+            log "Pausing for $RESTART_PAUSE s."
             sleep $RESTART_PAUSE
         fi
-        log "Restarting server." >&2
+        log "Restarting server."
         $0 start
         exit $?
         ;;
 
     status)
         if [[ ! -e $PID_FILE ]]; then
-            log "PID file $PID_FILE does not exist." >&2
+            log "PID file $PID_FILE does not exist."
             exit 2
         fi
         PID=`cat $PID_FILE`
-        if ps -p $PID > /dev/null 2>&1 ; then
-            log "Process $PID running." >&2
+        if [[ -z $PID ]]; then
+            log "Proxy server does not appear to be running"
+            exit 1
+        elif ps -p $PID > /dev/null 2>&1 ; then
+            log "Process $PID running."
             exit 0
         else
-            log "Process $PID no longer exists." >&2
+            log "Process $PID no longer exists."
+            echo "" > $PID_FILE
             exit 1
         fi
         ;;
 
     *)
-        echo "Usage: $0 {start|stop|restart|status}." >&2
+        echo "Usage: $0 {start|stop|restart|status}."
         exit 3
         ;;
 esac
