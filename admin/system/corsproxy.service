@@ -9,20 +9,20 @@
 [Unit]
 Description=CORS proxy service
 After=network-online.target
-StartLimitBurst=5
-StartLimitIntervalSec=30
 
 [Service]
-Type=simple
+Type=forking
 User=corsproxy
 Restart=on-failure
 RestartSec=5
 EnvironmentFile=/home/corsproxy/admin/config.sh
-PIDfile=/var/run/corsproxy/corsproxy.pid
+PIDFile=/var/run/corsproxy/corsproxy.pid
 ExecStart=/home/corsproxy/admin/corsproxy-helper start
 ExecStop=/home/corsproxy/admin/corsproxy-helper stop
 ExecReload=/home/corsproxy/admin/corsproxy-helper restart
 PrivateTmp=yes
+StartLimitBurst=5
+StartLimitInterval=30
 
 [Install]
 WantedBy=multi-user.target
