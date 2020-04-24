@@ -28,14 +28,20 @@ var host = process.env.HOST || '0.0.0.0';
 // Listen on a specific port via the PORT environment variable.
 var port = process.env.PORT || 8080;
 
-// If set, only origins listed in this array are permitted.
-var originWhitelist = parseEnvList(process.env.WHITELIST);
-
-// Array of blocked origins.  E.g: ['https://bad.foo.com', 'http://bad.foo.com']
-var originBlacklist = parseEnvList(process.env.BLACKLIST);
+// We only only allow connections from whitelisted origins, and we use CORS
+// Anywhere's "rate limit" facility to implement it. The value of the
+// RATELIMIT environment variable needs to be a list of the form
+// "N X host [host ...]", where N and X indicate N requests per X minutes
+// is the rate limit for connections that are *not* coming from the listed
+// hosts, and the list of hosts are hosts that are not restricted.
+// Hosts can be regular expressions of the JavaScript variety.
+// For example, "0 1 /.*\.caltech\.edu/" means 0 connections per minute are
+// allowed by default (i.e., block connections) except for conections from
+// *.caltech.edu.
+var rateLimit = parseEnvList(process.env.RATELIMIT);
 
 // List of headers that must be present in HTTP request.
-var requiredHeaders = parseEnvList(process.env.REQUIRED_HEADER);
+var requiredHeaders = parseEnvList(process.env.REQUIRED_HEADERS);
 
 // If set, add Access-Control-Max-Age request header with this value (in sec).
 var corsMaxAge = process.env.CORS_MAX_AGE;
@@ -55,13 +61,12 @@ function parseEnvList(env) {
 }
 
 cors_anywhere.createServer({
-    originBlacklist: originBlacklist,
-    originWhitelist: originWhitelist,
-    requireHeader: requiredHeaders,     // Note the difference in spellings.
-    setHeaders: {"X-Proxied-by": "CORS Proxy"},
-    redirectSameOrigin: true,
-    corsMaxAge: corsMaxAge,
-    helpFile: helpTextFile
+    requireHeader      : requiredHeaders,     // Note different spellings.
+    setHeaders         : {"X-Proxied-by": "CORS Proxy"},
+    checkRateLimit     : rateLimit,
+    redirectSameOrigin : true,
+    corsMaxAge         : corsMaxAge,
+    helpFile           : helpTextFile
 }).listen(port, host, function() {
-    console.log('Running CORS Anywhere on ' + host + ':' + port);
+    console.log('Running CORS Proxy on ' + host + ':' + port);
 });

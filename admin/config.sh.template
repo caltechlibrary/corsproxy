@@ -15,13 +15,21 @@ HOST="0.0.0.0"
 # The port on which the proxy will be listening.
 PORT=""
 
-# Only allow connections from whitelisted origins. This needs to be a list
-# of strings separated by spaces.
-WHITELIST=()
+# We only only allow connections from whitelisted origins, and we use CORS
+# Anywhere's "rate limit" facility to implement it. The value of the
+# RATELIMIT environment variable needs to be a list of the form
+# "N X host [host ...]", where N and X indicate N requests per X minutes
+# is the rate limit for connections that are not coming from the listed
+# hosts, and the list of hosts are hosts that are not restricted.
+# Hosts can be regular expressions of the JavaScript variety.
+# For example, "0 1 /.*\.caltech\.edu/" means 0 connections per minute are
+# allowed by default (i.e., block connections) except for conections from
+# *.caltech.edu.
+RATELIMIT=""
 
 # Define a list of headers that must be present in the request headers. This
 # is a means of stopping use by anything other than desired applications.
-REQUIRED_HEADER=()
+REQUIRED_HEADERS=()
 
 # If you use the default /var/run/corsproxy/corsproxy.pid, you need to
 # create /var/run/corsproxy (which requires root provileges) and then change
