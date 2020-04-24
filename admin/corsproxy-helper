@@ -33,6 +33,8 @@ else
     RESTART_PAUSE=10
 fi
 
+export HOST PORT RATELIMIT REQUIRED_HEADERS
+
 
 # Main code.
 # .............................................................................
