@@ -18,12 +18,15 @@ log() {
     $LOG $1 >&2
 }
 
+DIR="$(dirname "${BASH_SOURCE[0]}")"
+DIR="$(realpath "${DIR}")"
+
 
 # Read configuration file and set defaults.
 # .............................................................................
 
-if [[ -e config.sh ]]; then
-    log "Reading configuration file"
+if [[ -e $DIR/config.sh ]]; then
+    log "Reading configuration file $DIR/config.sh"
     source config.sh
 else
     # Default values in case config.sh is missing.
