@@ -8,7 +8,7 @@
 
 [Unit]
 Description=CORS proxy service
-After=network.target
+After=network-online.target
 StartLimitBurst=5
 StartLimitIntervalSec=30
 
@@ -18,9 +18,11 @@ User=corsproxy
 Restart=on-failure
 RestartSec=5
 EnvironmentFile=/home/corsproxy/admin/config.sh
-ExecStart=/home/corsproxy/admin/server start
-ExecStop=/home/corsproxy/admin/server stop
-ExecReload=/home/corsproxy/admin/server restart
+PIDfile=/var/run/corsproxy/corsproxy.pid
+ExecStart=/home/corsproxy/admin/corsproxy-helper start
+ExecStop=/home/corsproxy/admin/corsproxy-helper stop
+ExecReload=/home/corsproxy/admin/corsproxy-helper restart
+PrivateTmp=yes
 
 [Install]
 WantedBy=multi-user.target
