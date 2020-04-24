@@ -69,5 +69,5 @@ cors_anywhere.createServer({
     helpFile           : helpTextFile
 }).listen(port, host, function() {
     console.log('Running CORS Proxy on ' + host + ':' + port);
-    console.log('Ratelimit pattern: ' + rateLimit);
+    console.log('Ratelimit: "' + rateLimit + '"');
 });
