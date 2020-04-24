@@ -41,6 +41,7 @@ export HOST PORT RATELIMIT REQUIRED_HEADERS
 
 case "$1" in
     start)
+        cd $DIR/../server
         log "Starting server process from directory `pwd`"
         # Problem: we need the PID from the first process in the pipe, but if
         # you use $! you'll get the PID of the last process in the pipe.
@@ -49,7 +50,7 @@ case "$1" in
         # John Kugelman, 2014-07-16, https://stackoverflow.com/a/3786955/743730
         TMPFILE=$(mktemp /tmp/corsproxy.XXXXXX)
         trap 'rm -f -- "$TMPFILE"' INT TERM HUP EXIT
-        ( node ../server/server.js 2>&1 & echo $! >&3) 3>$TMPFILE | $LOG & >&2
+        ( node server.js 2>&1 & echo $! >&3) 3>$TMPFILE | $LOG & >&2
         sleep 2
         PID=$(<$TMPFILE)
         if [[ -z $PID ]]; then
