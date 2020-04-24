@@ -1,3 +1,4 @@
+## -*- mode: conf -*-
 ## ============================================================================
 ## File name   : cors-proxy.service
 ## Description : systemd configuration file for cors-proxy
