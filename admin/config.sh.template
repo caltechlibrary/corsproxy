@@ -21,25 +21,25 @@ PORT="8080"
 # must be a list of the form "N X host [host ...]", where the first 2 numbers
 # indicate the rate limit for unknown origins, and the list of hosts is the
 # whitelist (hosts without limits).  The numbers N and X indicate N requests
-# per X minutes for connections that are *not* coming from the listed hosts,
-# Hosts can be regular expressions of the JavaScript variety, set off by
-# forward slashes.  For example, "0 1 /.*\.caltech\.edu/" means 0 connections
-# per minute are allowed by default, except for conections from *.caltech.edu.
-# Note that this only affects CORS proxying; connections to the help page are
-# not affected by this at all, and are unrestricted.  (Corrolary: don't use
-# connections to the help page as a way to judge whether this setting is 
-# working as desired.)
+# per X minutes for connections that do *not* have Origin HTTP header values
+# with the given hosts or host patterns.  Host patterns can be regular
+# expressions of the JavaScript variety, set off by forward slashes.  For
+# example, "0 1 /.*\\.caltech\\.edu/" means 0 connections per minute are
+# allowed by default, except for conections that have an Origin header
+# containing *.caltech.edu.  Note that this *only* affects CORS proxying;
+# connections to the help page are not affected by this at all, and are
+# unrestricted.  (Corrolary: don't use connections to the help page as a way
+# to judge whether this setting is working as desired.)
 #
-# Note #1: if your client application is loaded into a web browser from a
-# local file (i.e., the URL is file://...), the value of the Origin header
-# will be forced by your browser to be "null".  So, you will not be able to
-# allow access on this basis.
-#
-# Note #2: if your client application is loaded into a local web browser
-# on your computer and the URL is (e.g.) http://localhost:8000/somefile.html,
-# then the Origin header will have a value of http://localhost:8000.  While
-# you could add localhost to the RATELIMIT host part, it is not recommended
-# as that will not provide much protection against potential attacks.
+# Tip: if your client application is loaded into a web browser from a local
+# file (i.e., the URL is file://...), the value of the Origin header will be
+# forced by your browser to be "null".  So, you will not be able to allow
+# access on this basis.  Similarly, if your client application is loaded into
+# a local web browser on your computer and the URL is (e.g.)
+# http://localhost:8000/somefile.html, then the Origin header will have a
+# value of http://localhost:8000.  While you could add localhost to the
+# RATELIMIT host part, it is not recommended as that will not provide much
+# protection against potential attacks.
 RATELIMIT="30 1"
 
 # The next variable defines a header that must be present in requests. This
