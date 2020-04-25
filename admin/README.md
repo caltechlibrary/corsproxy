@@ -1,7 +1,14 @@
-Installation and setup for CentOS/RHEL-flavored Linux
-=====================================================
+Installation and setup
+======================
 
-## Detailed installation and configuration steps.
+Table of contents
+-----------------
+
+* [Detailed installation and configuration steps for CentOS/RHEL-flavored Linux](#detailed-installation-and-configuration-steps-for-centosrhel-flavored-linux)
+* [Notes and tips about HTTP requests](#notes-and-tips-about-http-requests)
+
+
+## Detailed installation and configuration steps for CentOS/RHEL-flavored Linux
 
 Here are the steps I took to install and set up this service on a CentOS 7.7 system.  (Note: all of the following commands are performed as root.)
 
@@ -117,7 +124,7 @@ Here are some suggested steps to take to verify that the service is running:
 3. Now, try to connect to the proxy's landing page from a browser on your local computer, by visiting the top-level page on the host and port.  For example, if your proxy is running on port 8080 of the computer responding to `x.org`, the proxy page would be `http://x.org:8080`.  This landing page is not limited by the setting of `RATELIMIT` in the configuration file, so if you cannot access it, something else is wrong &ndash; perhaps the firewall settings on the server prevent access to that port from the outside.
 
 
-## Additional notes and considerations
+## Notes and tips about HTTP requests
 
 The following are notes about some lessons learned.
 
