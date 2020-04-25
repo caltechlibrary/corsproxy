@@ -34,12 +34,12 @@ PORT="8080"
 # Tip: if your client application is loaded into a web browser from a local
 # file (i.e., the URL is file://...), the value of the Origin header will be
 # forced by your browser to be "null".  So, you will not be able to allow
-# access on this basis.  Similarly, if your client application is loaded into
-# a local web browser on your computer and the URL is (e.g.)
-# http://localhost:8000/somefile.html, then the Origin header will have a
-# value of http://localhost:8000.  While you could add localhost to the
-# RATELIMIT host part, it is not recommended as that will not provide much
-# protection against potential attacks.
+# access on this basis.  Similarly, if you start a local web server on your
+# computer for your application, and access it via a localhost URL (e.g.,
+# http://localhost/somefile.html), then the Origin header will have a value
+# of http://localhost.  While you could add localhost to the RATELIMIT host
+# part, it is not recommended as that will not provide much protection
+# against potential abuse.
 RATELIMIT="30 1"
 
 # The next variable defines a header that must be present in requests. This
