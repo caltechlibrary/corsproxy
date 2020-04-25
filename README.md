@@ -31,13 +31,13 @@ A simple solution to this problem is to insert an intermediate proxy server betw
 Installation
 ------------
 
-Detailed installation and configuration instructions are given in the file [admin/README](admin/README).
+Detailed installation and configuration instructions are given in the file [admin/README](admin/README.md).
 
 
 Usage
 -----
 
-Corsproxy is meant to be started and stopped using standard system tools such as `systemctl` on CentOS.  Detailed instructions are given in the file [admin/README](admin/README).
+Corsproxy is meant to be started and stopped using standard system tools such as `systemctl` on CentOS.  Detailed instructions are given in the file [admin/README](admin/README.md).
 
 
 Known issues and limitations
