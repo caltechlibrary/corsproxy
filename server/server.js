@@ -44,8 +44,9 @@ var port = process.env.PORT || 8080;
 // whether this setting is working as desired.)
 var rateLimit = parseEnvList(process.env.RATELIMIT);
 
-// List of headers that must be present in HTTP request.
-var requiredHeaders = parseEnvList(process.env.REQUIRED_HEADERS);
+// Header that must be present in HTTP request in order for corsproxy to
+// accept it.
+var requiredHeader = parseEnvList(process.env.REQUIRED_HEADER);
 
 // File with text to override the default CORS Anywhere help text.
 var helpTextFile = path.join(__dirname, 'help-text.txt');
@@ -68,14 +69,15 @@ process.on('SIGTERM', () => {
 
 try {
     cors_anywhere.createServer({
-        requireHeader      : requiredHeaders,     // Note different spellings.
+        requireHeader      : requiredHeader,
         setHeaders         : {"X-Proxied-by": "CORS Proxy"},
         checkRateLimit     : checkRateLimit(rateLimit),
         redirectSameOrigin : true,
         helpFile           : helpTextFile
     }).listen(port, host, function() {
         console.log('Running CORS Proxy on ' + host + ':' + port);
-        console.log('Ratelimit: "' + rateLimit + '"');
+        console.log('Ratelimit configuration: "' + rateLimit + '"');
+        console.log('Required header: ' + requiredHeader);
     });
 } catch (err) {
     console.log(err);
