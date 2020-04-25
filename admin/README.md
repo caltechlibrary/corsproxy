@@ -75,7 +75,7 @@ Configure the CORS proxy server by copying the template configuration file and e
    # edit config.sh
    ```
 
-The value of the variables `RATELIMIT` and `REQUIRED_HEADERS` are the most important to set in order to help prevent abuse of the service.  Information about them can be found in the `config.sh.template` file.  Note: the way that the restrictions on origins works is currently limited, in that hosts are restricted based on the value of the `Origin` header in the HTTP request, _not the actual host or IP address_ of source of the request.  To block hosts by IP address ranges, configure your system's firewall appropriately (see next steps).  See the discussion later below for more on this topic.
+The value of the variables `RATELIMIT` and `REQUIRED_HEADER` are the most important to set in order to help prevent abuse of the service.  Information about them can be found in the `config.sh.template` file.  Note: the way that the restrictions on origins works is currently limited, in that hosts are restricted based on the value of the `Origin` header in the HTTP request, _not the actual host or IP address_ of source of the request.  To block hosts by IP address ranges, configure your system's firewall appropriately (see next steps).  See the discussion later below for more on this topic.
 
 
 ### &#9314; Configure your firewall
@@ -135,4 +135,11 @@ and then opening a web browser window on `http://localhost:8000/yourfilename.htm
 
 ### Additional protection against abuses of the proxy
 
-The `REQUIRED_HEADERS` setting in the configuration file can be used to identify a header that must be present in requests in orddr 
+The `REQUIRED_HEADER` setting in the configuration file can be used to identify a header that must be present in HTTP requests in order for proxy accesses to succeed.  It should be a single header name, without a value.
+For example,
+
+``` shell
+REQUIRED_HEADER="x-proxy-cors"
+```
+
+The header string will be compared in a case-insensitive manner.
