@@ -6,6 +6,7 @@ Table of contents
 
 * [Detailed installation and configuration steps for CentOS/RHEL-flavored Linux](#detailed-installation-and-configuration-steps-for-centosrhel-flavored-linux)
 * [Notes and tips about HTTP requests](#notes-and-tips-about-http-requests)
+* [Configuring the use of HTTPS](#configuring-the-use-of-https)
 
 
 ## Detailed installation and configuration steps for CentOS/RHEL-flavored Linux
@@ -34,7 +35,7 @@ Here are the steps I took to install and set up this service on a CentOS 7.7 sys
     npm install cors-anywhere
     ```
 
-4. Change the user and group of everything to match the proxy user:
+4. Change the user and group of everything to match the proxy user's group:
 
     ``` shell
     cd /home/corsproxy
@@ -74,7 +75,7 @@ Here are the steps I took to install and set up this service on a CentOS 7.7 sys
 
 ### &#9313; Configure the proxy
 
-Configure the CORS proxy server by copying the template configuration file and editing it to set the variable values as needed for your installation.
+Configure the CORS proxy server by copying the template configuration file to create `config.sh` and then editing this `config.sh` file to set the variable values as needed for your installation.
 
    ``` shell
    cd /home/corsproxy/admin
@@ -121,7 +122,7 @@ Here are some suggested steps to take to verify that the service is running:
 
 1. On the host computer running the proxy, after starting the proxy service, check that the proxy process is running (look for a `node` process owned by user `corsproxy` in the output of `ps auxww`) and also check that something is listening on the desired port (for example, look at the output of `netstat -at`).
 2. Next, open a new terminal window, `ssh` into the server running the proxy, and run `tail -f` on `/var/log/messages`.  Do the same for `/var/log/corsproxy/corsproxy.log` in another window.
-3. Now, try to connect to the proxy's landing page from a browser on your local computer, by visiting the top-level page on the host and port.  For example, if your proxy is running on port 8080 of the computer responding to `x.org`, the proxy page would be `http://x.org:8080`.  This landing page is not limited by the setting of `RATELIMIT` in the configuration file, so if you cannot access it, something else is wrong &ndash; perhaps the firewall settings on the server prevent access to that port from the outside.
+3. Now, try to connect to the proxy's landing page from a browser on your local computer, by visiting the top-level page on the host and port.  For example, if your proxy is running on port 8080 of the computer responding to `x.org`, the proxy page would be `http://x.org:8080` (or `https://x.org:8080` if you have [configured the use of HTTPS](#configuring-the-use-of-https) as discussed below.) This landing page is not limited by the setting of `RATELIMIT` in the configuration file, so if you cannot access it, something else is wrong &ndash; perhaps the firewall settings on the server prevent access to that port from the outside.
 
 
 ## Notes and tips about HTTP requests
@@ -165,3 +166,29 @@ REQUIRED_HEADER="x-proxy-cors"
 The header string will be compared in a case-insensitive manner.  Proxy requests that lack this HTTP header will be rejected.  Add the header to the requests made by the network code in the client software you control.
 
 It should be clear that this is a kind of _security by obscurity_ approach. It is meant to limit proxying to software only you control.  It has benefit only as long as you do not advertise the fact that your proxy looks for the header. (And note that revealing the nature of the header can happen accidentally via the _client_ software that you write.  Do not do things like hard-wire the header value into open-source software you put on GitHub, where sooner or later someone will find it.)
+
+
+## Configuring the use of HTTPS
+
+Corsproxy supports using HTTPS instead of HTTP.  To do that, you need to set the relevant configuration variables in your `config.sh` file to reference the key and certificate files needed by HTTPS.
+
+If you do not already have a certificate for use with corsproxy, you can obtain one easily with [Certbot](https://certbot.eff.org/lets-encrypt/centosrhel7-other).  here are the steps to follow to set up `corsproxy` with HTTPS on a CentOS system.
+
+1. Follow the instructions given on the [Certbot](https://certbot.eff.org/lets-encrypt/centosrhel7-other) web page to generate and install the necessary files on your server.  They will by default be placed in the directory `/etc/letsencrypt`.  For example, if your host and domain are named `hostname.hostdomain.com`, then a number of files will be created in `/etc/letsencrypt/live/hostname.hostdomain.com` and `/etc/letsencrypt/archive/hostname.hostdomain.com`.
+2. Change the permissions on the new files in `/etc/letsencrypt` to allow the `corsproxy` process to read them, and also to be able to write in the `archive` subdirectory.  This can be done as follows (here assuming that the process group name is `corsproxy`):
+
+    ``` shell
+    chmod -R 0770 /etc/letsencrypt/archive/
+    chmod -R 0750 /etc/letsencrypt/live/
+    chgrp -R corsproxy /etc/letsencrypt/archive/
+    chgrp -R corsproxy /etc/letsencrypt/live
+    ```
+
+3. Edit the `config.sh` file for your copy of `corsproxy` to set the values of the `KEY_FILE` and `CERT_FILE` variables.  Continuing with the example of `hostname.hostdomain.com`, the values would be as follows:
+
+    ```bash
+    KEY_FILE="/etc/letsencrypt/live/hostname.hostdomain.com/privkey.pem"
+    CERT_FILE="/etc/letsencrypt/live/hostname.hostdomain.com/fullchain.pem"
+    ```
+
+That should be enough.  Now you can restart the `corsproxy` server process, change your client's configuration to use `https` instead of `http` in the address for the proxy server, and try to connect through the proxy.  Watch the log files for indicates of whether things are working or not.
