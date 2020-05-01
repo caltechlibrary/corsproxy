@@ -16,6 +16,30 @@ HOST="0.0.0.0"
 # The port on which the proxy will be listening.  The default is 8080.
 PORT="8080"
 
+# The next two variables are for enabling HTTPS.  Leave blank to disable.
+#
+# If you use certbot, it will generate a key file and a certificate file.
+# By default, they'll be saved in /etc/letsencrypt/live/yourdomain and
+# /etc/letsencrypt/archive/yourdomain/.  Set the next two variables to the
+# paths in /etc/letsencrypt/live/.  E.g.:
+#
+#   KEY_FILE="/etc/letsencrypt/live/hostname.hostdomain.com/privkey.pem"
+#   CERT_FILE="/etc/letsencrypt/live/hostname.hostdomain.com/fullchain.pem"
+#
+# Note: (1) make sure the directory paths all the way down to the files are
+# readable to the process running the cors proxy, and (2) make sure the
+# /etc/letsencrypt/archive subdirectory is also writable to the process.
+# This can be done by setting the group permissions appropriately.  For
+# example, if your corsproxy process runs under the group "thegroup", then:
+#
+#   chmod -R 0770 /etc/letsencrypt/archive/
+#   chmod -R 0750 /etc/letsencrypt/live/
+#   chown -R root:thegroup /etc/letsencrypt/archive/
+#   chown -R root:thegroup /etc/letsencrypt/live
+#
+KEY_FILE=""
+CERT_FILE=""
+
 # We only allow connections from whitelisted origins, and we use the "rate
 # limit" facility of CORS Anywhere to implement it. The value of RATELIMIT
 # must be a list of the form "N X host [host ...]", where the first 2 numbers
