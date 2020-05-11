@@ -50,7 +50,7 @@ case "$1" in
         # John Kugelman, 2014-07-16, https://stackoverflow.com/a/3786955/743730
         TMPFILE=$(mktemp /tmp/corsproxy.XXXXXX)
         trap 'rm -f -- "$TMPFILE"' INT TERM HUP EXIT
-        ( node server.js 2>&1 & echo $! >&3) 3>$TMPFILE | $LOG & >&2
+        ( node corsproxy.js 2>&1 & echo $! >&3) 3>$TMPFILE | $LOG & >&2
         sleep 2
         PID=$(<$TMPFILE)
         if [[ -z $PID ]]; then
