@@ -66,9 +66,21 @@ CERT_FILE=""
 # against potential abuse.
 RATELIMIT="30 1"
 
-# The next variable defines a header that must be present in requests. This
+# The next variable can list headers that must be present in requests. This
 # is to stop anything other than known applications from using the service.
+# If you want to list more than one header, separate them with spaces.
 REQUIRED_HEADER=""
+
+# If you want to limit access from specific hosts only, set this to list all
+# hosts that can access the proxy, separated by spaces. Alternatively, you can
+# use RATELIMIT above to prevent all hosts outside the RATELIMIT list simply by
+# starting the RATELIMIT with 0. The whitelist is useful if you want to allow
+# some specific hosts in a rate-limited manner, while forbidding all others.
+ORIGIN_WHITELIST=""
+
+# If you want to prevent access from specific hosts, list them here,
+# separated by spaces.
+ORIGIN_BLACKLIST=""
 
 # If you use the default /var/run/corsproxy/corsproxy.pid, you need to
 # create /var/run/corsproxy (which requires root provileges) and then change
