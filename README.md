@@ -44,7 +44,6 @@ Known issues and limitations
 ----------------------------
 
 * The way that host restrictions/rate limits are implemented is based primarily on the Origin header in HTTP requests.  This works and has some security advantages, but makes it more difficult to configure in some other situations.
-* Whitelists and blacklists are supported by the underlying CORS Anywhere software but no interface is exposed in the basic configuration scheme provided by Corsproxy.  This was done because the rate limit mechanism can subsume the others, but it may prove to be a limitation for some users. 
 
 
 Getting help

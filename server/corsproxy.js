@@ -51,16 +51,34 @@ var cert_file = process.env.CERT_FILE || '';
 // the help page to judge whether this setting is working as desired.)
 var rateLimit = process.env.RATELIMIT || '30 1';
 
-// Header that must be present in HTTP request in order for corsproxy to
-// accept it.
+// Space-separated list of header(s) that must be present in HTTP request in
+// order for corsproxy to accept it.
 var requiredHeader = process.env.REQUIRED_HEADER || '';
+
+// Space-separated whitelist or blacklist for Origin.
+// If the whitelist is empty or unspecified, all origins are accepted
+// (except those listed explicitly in the blacklist).
+var originWhitelist = process.env.ORIGIN_WHITELIST || '';
+var originBlacklist = process.env.ORIGIN_BLACKLIST || '';
 
 // File with text to override the default CORS Anywhere help text.
 var helpTextFile = path.join(__dirname, 'help-text.txt');
 
-
 // Main code.
 // ............................................................................
+
+// Split up space-separated fields into arrays.
+function spaceSeparated(x) {
+    x = x.trim();
+    if (x) {
+        return x.split(/\s+/g);
+    } else {
+        return [];
+    }
+}
+requiredHeader = spaceSeparated(requiredHeader);
+originWhitelist = spaceSeparated(originWhitelist);
+originBlacklist = spaceSeparated(originBlacklist);
 
 process.on('SIGTERM', () => {
     console.log('Received SIGTERM; exiting.');
@@ -80,6 +98,8 @@ if (key_file && cert_file) {
 try {
     cors_anywhere.createServer({
         requireHeader      : requiredHeader,
+        originWhitelist    : originWhitelist,
+        originBlacklist    : originBlacklist,
         setHeaders         : {"X-Proxied-by": "CORS Proxy"},
         checkRateLimit     : checkRateLimit(rateLimit),
         redirectSameOrigin : true,
@@ -88,7 +108,9 @@ try {
     }).listen(port, host, function() {
         console.log('Running CORS Proxy on ' + host + ':' + port);
         console.log('Ratelimit configuration: "' + rateLimit + '"');
-        console.log('Required header: ' + requiredHeader);
+        console.log('Required headers: ' + JSON.stringify(requiredHeader));
+        console.log('Origin whitelist: ' + JSON.stringify(originWhitelist));
+        console.log('Origin blacklist: ' + JSON.stringify(originBlacklist));
     });
 } catch (err) {
     console.log(err);
