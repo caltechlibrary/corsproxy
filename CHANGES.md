@@ -1,6 +1,14 @@
 Change log for REPOSITORY
 =========================
 
+Version 1.1.0
+-------------
+
+* Merge PR #1 from [Erik Demaine](https://github.com/edemaine) to add support for black lists and white lists.
+* Fix [security vulnerability in `http-proxy` module](https://github.com/advisories/GHSA-6x33-pw7p-hmpq) by updating dependency to version 1.18.1.
+* Fix out-of-date links in supporting info files.
+
+
 Version 1.0.1
 -------------
 
