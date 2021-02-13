@@ -63,6 +63,8 @@ Authors and history
 
 Michael Hucka developed the first version of Corsproxy after running into problems during the implementation of a Vue.js based application that had to interact with a non-CORS enabled network service.
 
+[Erik Demaine](https://github.com/edemaine) contributed a pull request in Feb. 20201 to add support for explicit white lists and black lists.
+
 
 Acknowledgments
 ---------------
