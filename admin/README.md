@@ -115,6 +115,8 @@ Now, at this point, everything is in place, and what remains is to tell the oper
 
 If all goes well, a `node` process should be running under the user credentials of `corsproxy`.  Log output should also appear in a new log file located at `/var/log/corsproxy/corsproxy.log`, but it will also get printed to `/var/log/messages`.  If log output is _only_ printed in `/var/log/messages`, something has gone wrong.
 
+If things do not go well, inspect the log messages and try to determine if there is a configuration problem or a permissions problem.  One of the sources for permissions problems is SELinux: you may find that the service simply refuses to run due to file access errors even when you have checked the permissions of all the files and directories.  If that happens, check the value of the variable `SELINUX` in `/etc/selinux/config`: if it is `enforcing`, then you will have to take additional steps to let the system read the Corsproxy files and start the process, or else change the SELinux mode to `permissive`.  (The latter will reduce the security of the system, so beware.)
+
 
 ### &#9316; Check that the service is running
 
