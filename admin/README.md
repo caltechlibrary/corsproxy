@@ -193,4 +193,13 @@ If you do not already have a certificate for use with corsproxy, you can obtain 
     CERT_FILE="/etc/letsencrypt/live/hostname.hostdomain.com/fullchain.pem"
     ```
 
+4. Create scripts to restart Corsproxy whenever the certificates renew:
+
+    ```bash
+    printf "#!/bin/sh\nsystemctl stop corsproxy.service\n" > /etc/letsencrypt/renewal-hooks/pre/corsproxy.sh'
+    printf "#!/bin/sh\nsystemctl start corsproxy.service\n" > /etc/letsencrypt/renewal-hooks/post/corsproxy.sh'
+    chmod 755 /etc/letsencrypt/renewal-hooks/pre/corsproxy.sh
+    chmod 755 /etc/letsencrypt/renewal-hooks/post/corsproxy.sh
+    ```
+
 That should be enough.  Now you can restart the `corsproxy` server process, change your client's configuration to use `https` instead of `http` in the address for the proxy server, and try to connect through the proxy.  Watch the log files for indicates of whether things are working or not.
